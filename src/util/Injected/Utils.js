@@ -1024,17 +1024,21 @@ exports.LoadUtils = () => {
 
         res.isBlocked = contact.isContactBlocked;
         if (!res.isBlocked) {
-            const alt = window
-                .require('WAWebApiContact')
-                .getAlternateUserWid(
-                    window
-                        .require('WAWebWidFactory')
-                        .asUserWidOrThrow(contact.id),
-                );
-            if (alt) {
-                res.isBlocked = !!window
-                    .require('WAWebCollections')
-                    .Blocklist.get(alt);
+            try {
+                const alt = window
+                    .require('WAWebApiContact')
+                    .getAlternateUserWid(
+                        window
+                            .require('WAWebWidFactory')
+                            .asUserWidOrThrow(contact.id),
+                    );
+                if (alt) {
+                    res.isBlocked = !!window
+                        .require('WAWebCollections')
+                        .Blocklist.get(alt);
+                }
+            } catch (_) {
+                // non-user WIDs (groups, broadcasts, etc.) cannot be blocked via alternate WID
             }
         }
 
